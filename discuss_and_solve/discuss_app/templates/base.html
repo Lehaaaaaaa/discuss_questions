@@ -14,7 +14,10 @@
                 {% if user.is_authenticated %}
                     <span class="text-white me-3">Привет, <strong>{{ user.username }}</strong>! 👋</span>
                     <a href="{% url 'create_question' %}" class="btn btn-success btn-sm me-2">Задать вопрос</a>
-                    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Выйти</a>
+    
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %} <button type="submit" class="btn btn-outline-danger btn-sm">Выйти</button>
+                    </form>
                 {% else %}
                     <span class="text-muted me-3">Гость</span>
                     <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Войти</a>
