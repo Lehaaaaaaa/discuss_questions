@@ -1,0 +1,42 @@
+{% extends 'base.html' %} {% block title %}Вход в аккаунт{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5">
+        
+        <div class="card shadow border-0 rounded-3">
+            <div class="card-body p-5">
+                
+                <h2 class="text-center fw-bold mb-4 text-dark">Войти на форум</h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4 djanog-form-fields">
+                        {{ form.as_p }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill shadow-sm mb-3">
+                        Войти в аккаунт
+                    </button>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'index_page' %}" class="text-muted text-decoration-none small">
+                        ← Вернуться на главную
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.djanog-form-fields input').forEach(function(input) {
+        input.classList.add('form-control');
+        input.classList.add('mb-2');
+    });
+</script>
+{% endblock %}

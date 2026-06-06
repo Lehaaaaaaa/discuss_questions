@@ -14,7 +14,9 @@ class Tag(models.Model):
 class Question(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questions')
 
-    slug = models.SlugField(max_length=255, unique = True)
+    title = models.CharField(max_length=200, default="Без названия")
+
+    slug = models.SlugField(max_length=255, unique = True, blank = True, null = True)
     text = models.TextField()
     is_solved = models.BooleanField(default=False, verbose_name="Решено")
 
