@@ -10,11 +10,23 @@
                 <div class="card-body">
                     <h3 class="card-title h5 text-primary fw-bold">{{ question.title }}</h3>
                     
-                    <div class="mb-3">
+                    <div class="mb-3 d-flex align-items-center gap-2">
                         {% if question.is_solved %}
                             <span class="badge bg-success">Решено ✅</span>
+                            {% if user.is_authenticated and question.author == user %}
+                                <form action="{% url 'toggle_resolve' question.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link p-0 text-muted text-decoration-none small" style="font-size: 0.85rem;">(открыть вопрос)</button>
+                                </form>
+                            {% endif %}
                         {% else %}
                             <span class="badge bg-warning text-dark">В процессе ⏳</span>
+                            {% if user.is_authenticated and question.author == user %}
+                                <form action="{% url 'toggle_resolve' question.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link p-0 text-success text-decoration-none small" style="font-size: 0.85rem;">(закрыть вопрос)</button>
+                                </form>
+                            {% endif %}
                         {% endif %}
                     </div>
 
@@ -48,34 +60,29 @@
                         </div>
                     </div>
 
-                    {% if user.is_authenticated and question.author == user %}
-                        <div class="mt-3 pt-3 border-top d-flex gap-2">
-                            <form action="{% url 'toggle_resolve' question.id %}" method="post" class="d-inline">
-                                {% csrf_token %}
-                                {% if question.is_solved %}
-                                    <button type="submit" class="btn btn-warning btn-sm">Открыть заново</button>
-                                {% else %}
-                                    <button type="submit" class="btn btn-success btn-sm">Отметить как решено</button>
-                                {% endif %}
-                            </form>
-
+                </div>
+                
+                <div class="card-footer text-muted d-flex justify-content-between align-items-center bg-transparent">
+                    <span>Автор: <strong>{{ question.author.username }}</strong></span>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <small>{{ question.created_at|date:"d.m.Y H:i" }}</small>
+                        
+                        {% if user.is_authenticated and question.author == user %}
                             <form action="{% url 'delete_question' question.id %}" method="post" class="d-inline">
                                 {% csrf_token %}
                                 <button type="button" 
-                                        class="btn btn-danger btn-sm text-nowrap" 
+                                        class="btn btn-link p-0 text-danger text-decoration-none small" 
+                                        style="font-size: 0.85rem;"
                                         title="Нажмите дважды для удаления"
                                         ondblclick="this.form.submit();">
-                                    Удалить (2х клик)
+                                    (удалить пост)
                                 </button>
                             </form>
-                        </div>
-                    {% endif %}
-
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="card-footer text-muted d-flex justify-content-between align-items-center bg-transparent">
-                    <span>Автор: <strong>{{ question.author.username }}</strong></span>
-                    <small>{{ question.created_at|date:"d.m.Y H:i" }}</small>
-                </div>
+                
             </div>
         </div>
         

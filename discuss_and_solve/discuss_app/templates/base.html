@@ -23,13 +23,13 @@
                     
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link text-warning" href="{% url 'favorite_questions' %}">⭐ Избранное</a>
+                            <a class="nav-link" href="{% url 'favorite_questions' %}">Избранное</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'create_question' %}">Задать вопрос</a>
                         </li>
-                        <li class="nav-item ms-3">
-                            <span class="navbar-text text-white me-3">Привет, {{ user.username }}!</span>
+                        <li class="nav-item ms-3 me-3">
+                            <span class="navbar-text text-white">Привет, {{ user.username }}!</span>
                         </li>
                         <li class="nav-item">
                             <form action="{% url 'logout' %}" method="post" class="d-inline">
