@@ -8,7 +8,11 @@
         <div class="col-md-8 mx-auto mb-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h3 class="card-title h5 text-primary fw-bold">{{ question.title }}</h3>
+                    <h3 class="card-title h5 fw-bold">
+                        <a href="{% url 'question_detail' question.id %}" class="text-decoration-none text-primary">
+                            {{ question.title }}
+                        </a>
+                    </h3>
                     
                     <div class="mb-3">
                         {% if question.is_solved %}
@@ -26,8 +30,8 @@
                         </div>
                     {% endif %}
                     
-                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                        <div class="d-flex gap-3">
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top w-100">
+                        <div class="d-flex gap-3 w-100 align-items-center">
                             <form action="{% url 'toggle_like' question.id %}" method="post" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="btn {% if user in question.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm rounded-pill">
@@ -41,6 +45,10 @@
                                     ★ В избранном
                                 </button>
                             </form>
+
+                            <a href="{% url 'question_detail' question.id %}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                                💬 Ответы <span class="badge bg-secondary text-white ms-1">{{ question.comments.count }}</span>
+                            </a>
                         </div>
                     </div>
 
