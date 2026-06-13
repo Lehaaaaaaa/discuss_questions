@@ -16,4 +16,5 @@ urlpatterns= [
     path('question/<int:question_id>/', views.question_detail, name='question_detail'),
     path('comment/<int:comment_id>/like/', views.like_comment, name='like_comment'),
     path('comment/<int:comment_id>/dislike/', views.dislike_comment, name='dislike_comment'),
+    path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
 ]

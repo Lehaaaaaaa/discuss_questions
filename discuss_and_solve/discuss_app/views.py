@@ -160,3 +160,14 @@ def dislike_comment(request, comment_id):
         comment.dislikes.add(request.user)
         comment.likes.remove(request.user)
     return redirect('question_detail', question_id=comment.question.id)
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    if comment.author == request.user:
+        question_id = comment.question.id
+        comment.delete()
+        return redirect('question_detail', question_id=question_id)
+    
+    return redirect('index_page')

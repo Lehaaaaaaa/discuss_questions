@@ -41,7 +41,7 @@
                     </div>
                     <p class="card-text text-dark mb-2">{{ comment.text }}</p>
                     
-                    <div class="d-flex gap-3 border-top pt-2" style="font-size: 0.85rem;">
+                    <div class="d-flex align-items-center gap-3 border-top pt-2 w-100" style="font-size: 0.85rem;">
                         <form action="{% url 'like_comment' comment.id %}" method="post" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm p-0 text-decoration-none {% if user in comment.likes.all %}text-primary fw-bold{% else %}text-muted{% endif %}">
@@ -55,6 +55,19 @@
                                 👎 {{ comment.dislikes.count }}
                             </button>
                         </form>
+
+                        {% if user.is_authenticated and comment.author == user %}
+                            <form action="{% url 'delete_comment' comment.id %}" method="post" class="d-inline ms-auto">
+                                {% csrf_token %}
+                                <button type="button" 
+                                        class="btn btn-link p-0 text-danger text-decoration-none small" 
+                                        style="font-size: 0.8rem;"
+                                        title="Нажмите дважды для удаления"
+                                        ondblclick="this.form.submit();">
+                                    (удалить)
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
