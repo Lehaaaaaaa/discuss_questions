@@ -3,6 +3,7 @@ from .models import Question, Favorite, Report, Comment
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.utils.text import slugify
+from django.db.models import Count
 
 
 class QuestionForm(forms.ModelForm):
@@ -11,8 +12,22 @@ class QuestionForm(forms.ModelForm):
         fields = ['title', 'text', 'image']
 
 def index(request):
-    all_questions = Question.objects.all().order_by('-created_at')
+    questions_queryset = Question.objects.all()
     
+    search_query = request.GET.get('search', '')
+    if search_query:
+        questions_queryset = questions_queryset.filter(
+            title__icontains = search_query
+        ) | questions_queryset.filter(
+            text__icontains = search_query
+        )
+
+    sort_by = request.GET.get('sort', 'date')
+    if sort_by == 'likes':
+        questions_queryset = questions_queryset.annotate(total_likes = Count('likes'))
+    else:
+        questions_queryset = questions_queryset.order_by('-created_at')
+
     user_favorites_ids = []
     user_reports_ids = []
     
@@ -21,9 +36,11 @@ def index(request):
         user_reports_ids = Report.objects.filter(user=request.user).values_list('question_id', flat=True)
         
     return render(request, 'index.html', {
-        'questions': all_questions, 
+        'questions': questions_queryset, 
         'user_favorites_ids': user_favorites_ids,
-        'user_reports_ids': user_reports_ids
+        'user_reports_ids': user_reports_ids,
+        'current_sort': sort_by,
+        'search_query': search_query,
     })
 
 @login_required(login_url = 'login')
@@ -80,15 +97,27 @@ def toggle_favorite(request, question_id):
 
 @login_required
 def favorite_questions(request):
-    favorites = Favorite.objects.filter(user=request.user).select_related('question')
-    questions = [fav.question for fav in favorites]
-    user_favorites_ids = [q.id for q in questions]
+    favorites = Favorite.objects.filter(user=request.user)
     
-    return render(request, 'favorites.html', {
-        'questions': questions,
-        'user_favorites_ids': user_favorites_ids
-    })
+    favorite_question_ids = favorites.values_list('question_id', flat=True)
+    
+    questions_queryset = Question.objects.filter(id__in=favorite_question_ids)
 
+    search_query = request.GET.get('search', '')
+    if search_query:
+        questions_queryset = questions_queryset.filter(title__icontains=search_query) | questions_queryset.filter(text__icontains=search_query)
+
+    sort_by = request.GET.get('sort', 'date')
+    if sort_by == 'likes':
+        questions_queryset = questions_queryset.annotate(total_likes=Count('likes')).order_by('-total_likes', '-created_at')
+    else:
+        questions_queryset = questions_queryset.order_by('-created_at')
+
+    return render(request, 'favorites.html', {
+        'questions': questions_queryset,
+        'current_sort': sort_by,
+        'search_query': search_query,
+    })
 
 @login_required
 def toggle_report(request, question_id):

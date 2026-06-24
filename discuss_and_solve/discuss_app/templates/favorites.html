@@ -3,6 +3,41 @@
 {% block content %}
 <h1 class="mb-4 text-warning">⭐ Ваши избранные вопросы</h1>
 
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm bg-light">
+            <div class="card-body">
+                <form method="get" action="{% url 'favorite_questions' %}" class="row g-3 align-items-center">
+                    
+                    <div class="col-lg-6">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white text-muted">🔍</span>
+                            <input type="text" name="search" class="form-control" placeholder="Искать в избранном..." value="{{ search_query }}">
+                            {% if search_query %}
+                                <a href="{% url 'favorite_questions' %}?sort={{ current_sort }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">Очистить</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6 d-flex justify-content-lg-end gap-2">
+                        <span class="text-muted small align-self-center me-1">Сортировать:</span>
+                        
+                        <a href="{% url 'favorite_questions' %}?sort=date&search={{ search_query }}" 
+                           class="btn btn-sm rounded-pill {% if current_sort == 'date' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            🕒 Новые
+                        </a>
+                        
+                        <a href="{% url 'favorite_questions' %}?sort=likes&search={{ search_query }}" 
+                           class="btn btn-sm rounded-pill {% if current_sort == 'likes' %}btn-success{% else %}btn-outline-success{% endif %}">
+                            🔥 По лайкам
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     {% for question in questions %}
         <div class="col-md-8 mx-auto mb-4">
